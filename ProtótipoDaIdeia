@@ -1,0 +1,170 @@
+// --- 1. Variáveis Globais ---
+
+// Jogador
+let playerX, playerY, playerTamanho = 20;
+let playerCor, corNormal, corAtingido, corDash, corFoco;
+let hitTimer = 0;
+
+// Movimento com Inércia
+let playerVx = 0, playerVy = 0; // Velocidade atual do jogador
+const ACELERACAO = 0.6; // Um pouco mais de aceleração para compensar o atrito
+const FRICCAO = 0.88;   // --- MUDANÇA PRINCIPAL: Mais atrito, menos "flutuação" ---
+const VELOCIDADE_MAX = 6;
+
+// Dash como Impulso
+let estaDandoDash = false;
+let tempoInicioDash = 0;
+let tempoCooldownDash = 0;
+const DURACAO_DASH = 500;   // 0.5 segundos de intangibilidade
+const COOLDOWN_DASH = 1200;
+const FORCA_IMPULSO_DASH = 15;
+
+// Habilidade de Foco
+let focoAtivo = false, tempoFimFoco = 0, tempoCooldownFoco = 0;
+const DURACAO_FOCO = 3000; const COOLDOWN_FOCO = 15000;
+
+// Área de Batalha
+let boxLargura = 450, boxAltura = 350;
+let boxX, boxY;
+
+// Projéteis e Sistema de Jogo
+let projeteis = [];
+let estadoBatalha = 'PAUSA', tempoProximoEstado = 0;
+let nivelDificuldade = 1, tempoInicioNivel = 0;
+let sequenciaAtaques = [], avisos = [];
+const DURACAO_PAUSA = 1800, DURACAO_AVISO = 1300, DURACAO_ATAQUE = 5000;
+
+
+// --- 2. Função setup() ---
+function setup() {
+  createCanvas(800, 600);
+  boxX = (width - boxLargura) / 2; boxY = (height - boxAltura) / 2;
+  playerX = boxX + boxLargura / 2; playerY = boxY + boxAltura / 2;
+  corNormal = color(255, 0, 0); corAtingido = color(255);
+  corDash = color(0, 255, 255, 150); corFoco = color(255, 255, 0);
+  playerCor = corNormal;
+  tempoProximoEstado = millis() + DURACAO_PAUSA; tempoInicioNivel = millis();
+}
+
+
+// --- 3. Loop Principal e Inputs ---
+function draw() {
+  background(0);
+  gerenciarNivelDificuldade(); gerenciarEstadosBatalha(); gerenciarEfeitoDano();
+  gerenciarMovimentoJogador(); atualizarProjeteis();
+  desenharAreaBatalha(); desenharJogador(); desenharUI();
+  if (estadoBatalha === 'AVISO') { desenharAvisos(); }
+  fill(255); textSize(20); textAlign(CENTER);
+  text("Nível: " + nivelDificuldade, width / 2, 30);
+}
+
+function keyPressed() {
+    if (key === ' ' && millis() > tempoCooldownDash && !estaDandoDash) {
+        iniciarDash();
+    }
+    if (keyCode === SHIFT && millis() > tempoCooldownFoco && !focoAtivo) {
+        iniciarFoco();
+    }
+}
+
+// --- 4. Sistema de Ataques (sem alterações) ---
+const ATAQUES = {
+  CHUVA_VERTICAL: { nivelMin: 1, aviso: () => { let d = { tipo: 'chuva', posicoes: [] }; for (let i = 0; i < 4 + nivelDificuldade; i++) { d.posicoes.push({ x: random(boxX, boxX + boxLargura) }); } avisos.push(d); }, execucao: () => { if (frameCount % max(5, 20 - nivelDificuldade*2) === 0) { let a = avisos.find(av => av.tipo === 'chuva'); if(!a) return; for (let p of a.posicoes) { projeteis.push(new Projetil(p.x, boxY - 10, 0, 4 + nivelDificuldade)); } } } },
+  RAJADA_HORIZONTAL: { nivelMin: 1, aviso: () => { let l = random(['esquerda', 'direita']); let y = random(boxY + 20, boxY + boxAltura - 20); avisos.push({ tipo: 'rajada', lado: l, y: y }); }, execucao: () => { if (frameCount % max(5, 25 - nivelDificuldade*2) === 0) { let a = avisos.find(av => av.tipo === 'rajada'); if (!a) return; let x = (a.lado === 'esquerda') ? boxX - 10 : boxX + boxLargura + 10; let vx = (a.lado === 'esquerda') ? 5 + nivelDificuldade : -5 - nivelDificuldade; projeteis.push(new Projetil(x, a.y, vx, 0)); } } },
+  BOMBA_RELOGIO: { nivelMin: 2, aviso: () => { let x = random(boxX + 30, boxX + boxLargura - 30); let y = random(boxY + 30, boxY + boxAltura - 30); avisos.push({ tipo: 'bomba', x: x, y: y, raio: 50 }); }, execucao: () => { if (frameCount % 1 === 0 && estadoBatalha === 'ATIVO' && avisos.find(a => a.tipo === 'bomba')) { let a = avisos.find(av => av.tipo === 'bomba'); for (let i = 0; i < 8 + nivelDificuldade; i++) { let ang = TWO_PI / (8 + nivelDificuldade) * i; projeteis.push(new Projetil(a.x, a.y, cos(ang) * (3 + nivelDificuldade/2), sin(ang) * (3 + nivelDificuldade/2))); } avisos = avisos.filter(av => av.tipo !== 'bomba'); } } },
+  CERCO: { nivelMin: 3, aviso: () => { let cX = playerX; let cY = playerY; let t = 180; avisos.push({ tipo: 'cerco', x: cX - t/2, y: cY - t/2, w: t, h: t }); }, execucao: () => { if (frameCount % 12 === 0) { let a = avisos.find(av => av.tipo === 'cerco'); if (!a) return; let v = 4 + nivelDificuldade / 2; let canto = a.w * 0.25; projeteis.push(new Projetil(random(a.x + canto, a.x + a.w - canto), a.y, 0, v)); projeteis.push(new Projetil(random(a.x + canto, a.x + a.w - canto), a.y + a.h, 0, -v)); projeteis.push(new Projetil(a.x, random(a.y + canto, a.y + a.h - canto), v, 0)); projeteis.push(new Projetil(a.x + a.w, random(a.y + canto, a.y + a.h - canto), -v, 0)); } } },
+  ESPIRAL_DUPLA: { nivelMin: 4, aviso: () => { avisos.push({ tipo: 'espiral', x: boxX + boxLargura / 2, y: boxY + boxAltura / 2 }); }, execucao: () => { if (frameCount % 4 === 0) { let a = avisos.find(av => av.tipo === 'espiral'); if (!a) return; let ang1 = frameCount * 0.1; let ang2 = -frameCount * 0.1; let v = 2.5 + nivelDificuldade/2; projeteis.push(new Projetil(a.x, a.y, cos(ang1) * v, sin(ang1) * v)); projeteis.push(new Projetil(a.x, a.y, cos(ang2) * v, sin(ang2) * v)); } } },
+  PAREDES_MOVEDICAS: { nivelMin: 4, aviso: () => { let t = max(70, 120 - nivelDificuldade * 5); let p = random(boxY + t/2, boxY + boxAltura - t/2); avisos.push({ tipo: 'paredes', brecha: t, brechaPos: p }); }, execucao: () => { if (frameCount % 6 === 0) { let a = avisos.find(av => av.tipo === 'paredes'); if(!a) return; for(let i = 0; i < boxAltura; i += 15) { if(i < a.brechaPos - a.brecha/2 || i > a.brechaPos + a.brecha/2) { projeteis.push(new Projetil(boxX, boxY + i, 3, 0)); projeteis.push(new Projetil(boxX + boxLargura, boxY + i, -3, 0)); } } } } },
+  CAMPO_MINADO: { nivelMin: 5, aviso: () => { let m = []; for (let i = 0; i < 5 + nivelDificuldade; i++) { m.push({ x: random(boxX + 20, boxX + boxLargura - 20), y: random(boxY + 20, boxY + boxAltura - 20), armada: false, tempoArmar: millis() + DURACAO_AVISO + random(500), detonada: false }); } avisos.push({ tipo: 'minas', minas: m }); }, execucao: () => { let a = avisos.find(av => av.tipo === 'minas'); if(!a) return; for(let mina of a.minas) { if(millis() > mina.tempoArmar && !mina.armada && !mina.detonada) { mina.armada = true; } if(mina.armada && dist(playerX, playerY, mina.x, mina.y) < 30) { for (let i = 0; i < 8; i++) { let ang = TWO_PI / 8 * i; projeteis.push(new Projetil(mina.x, mina.y, cos(ang) * 4, sin(ang) * 4)); } mina.armada = false; mina.detonada = true; } } } },
+  LASER_TELEGUIADO: { nivelMin: 6, aviso: () => { avisos.push({ tipo: 'laser', alvoX: playerX, alvoY: playerY, travado: false }); }, execucao: () => { let a = avisos.find(av => av.tipo === 'laser'); if(!a) return; if(estadoBatalha === 'AVISO') { a.alvoX = lerp(a.alvoX, playerX, 0.08); a.alvoY = lerp(a.alvoY, playerY, 0.08); } if(estadoBatalha === 'ATIVO' && !a.travado) { a.travado = true; let ang = atan2(a.alvoY - 0, a.alvoX - (width / 2)); projeteis.push(new Projetil(width/2, 0, cos(ang) * 12, sin(ang) * 12, 'laser')); } } }
+};
+
+// --- 5. Funções de Gerenciamento e Lógica ---
+
+function gerenciarNivelDificuldade() { if (millis() - tempoInicioNivel > 20000) { nivelDificuldade++; tempoInicioNivel = millis(); } }
+function gerenciarEstadosBatalha() { if (millis() > tempoProximoEstado) { if (estadoBatalha === 'PAUSA') { estadoBatalha = 'AVISO'; escolherProximoAtaque(); tempoProximoEstado = millis() + DURACAO_AVISO; } else if (estadoBatalha === 'AVISO') { estadoBatalha = 'ATIVO'; tempoProximoEstado = millis() + DURACAO_ATAQUE; } else if (estadoBatalha === 'ATIVO') { estadoBatalha = 'PAUSA'; avisos = []; sequenciaAtaques = []; tempoProximoEstado = millis() + DURACAO_PAUSA; } } if (estadoBatalha === 'ATIVO') { for(let ataque of sequenciaAtaques) { ataque.execucao(); } } }
+function escolherProximoAtaque() { sequenciaAtaques = []; avisos = []; let ataquesPossiveis = Object.values(ATAQUES).filter(a => nivelDificuldade >= a.nivelMin); let ataque1 = random(ataquesPossiveis); sequenciaAtaques.push(ataque1); ataque1.aviso(); if (nivelDificuldade >= 3 && random() < 0.5) { let ataquesCombinaçao = ataquesPossiveis.filter(a => a !== ataque1 && a.nivelMin < 4); if(ataquesCombinaçao.length > 0) { let ataque2 = random(ataquesCombinaçao); sequenciaAtaques.push(ataque2); ataque2.aviso();} }}
+
+function iniciarDash() {
+    estaDandoDash = true;
+    tempoInicioDash = millis();
+    tempoCooldownDash = millis() + COOLDOWN_DASH;
+    
+    let dirX = 0; let dirY = 0;
+    if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) { dirX -= 1; }
+    if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) { dirX += 1; }
+    if (keyIsDown(UP_ARROW) || keyIsDown(87)) { dirY -= 1; }
+    if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) { dirY += 1; }
+    if (dirX === 0 && dirY === 0) { dirY = -1; }
+    
+    // --- MUDANÇA PRINCIPAL: O dash agora SOMA à velocidade atual ---
+    let mag = sqrt(dirX * dirX + dirY * dirY);
+    if (mag > 0) {
+        playerVx += (dirX / mag) * FORCA_IMPULSO_DASH;
+        playerVy += (dirY / mag) * FORCA_IMPULSO_DASH;
+    }
+}
+
+function iniciarFoco() { focoAtivo = true; tempoFimFoco = millis() + DURACAO_FOCO; tempoCooldownFoco = millis() + COOLDOWN_FOCO; }
+
+function gerenciarMovimentoJogador() {
+  // A intangibilidade do dash é um timer, mas o movimento é controlado pela física
+  if (estaDandoDash && millis() - tempoInicioDash > DURACAO_DASH) {
+    estaDandoDash = false;
+  }
+  
+  // O movimento normal só é aplicado se o Foco não estiver ativo
+  if (focoAtivo) {
+      // Movimento PRECISO E RÁPIDO durante o Foco
+      let velocidadeFoco = VELOCIDADE_MAX * 1.2;
+      playerVx = 0; playerVy = 0; // Cancela a inércia para controle total
+      if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) { playerX -= velocidadeFoco; }
+      if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) { playerX += velocidadeFoco; }
+      if (keyIsDown(UP_ARROW) || keyIsDown(87)) { playerY -= velocidadeFoco; }
+      if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) { playerY += velocidadeFoco; }
+  } else {
+      // Aceleração com base nas teclas (se não estiver dando dash)
+      if (!estaDandoDash) {
+        if (keyIsDown(LEFT_ARROW) || keyIsDown(65)) { playerVx -= ACELERACAO; }
+        if (keyIsDown(RIGHT_ARROW) || keyIsDown(68)) { playerVx += ACELERACAO; }
+        if (keyIsDown(UP_ARROW) || keyIsDown(87)) { playerVy -= ACELERACAO; }
+        if (keyIsDown(DOWN_ARROW) || keyIsDown(83)) { playerVy += ACELERACAO; }
+      }
+  }
+
+  // A física de inércia e atrito é sempre aplicada se o Foco não estiver ativo
+  if (!focoAtivo) {
+      playerVx *= FRICCAO;
+      playerVy *= FRICCAO;
+      
+      // Limita a velocidade máxima
+      let velAtual = sqrt(playerVx*playerVx + playerVy*playerVy);
+      if(velAtual > VELOCIDADE_MAX && !estaDandoDash) { // O dash pode ultrapassar o limite
+          playerVx = (playerVx / velAtual) * VELOCIDADE_MAX;
+          playerVy = (playerVy / velAtual) * VELOCIDADE_MAX;
+      }
+      
+      playerX += playerVx;
+      playerY += playerVy;
+  }
+  
+  if (focoAtivo && millis() > tempoFimFoco) {
+    focoAtivo = false;
+  }
+  
+  let minX = boxX + playerTamanho / 2; let maxX = boxX + boxLargura - playerTamanho / 2;
+  let minY = boxY + playerTamanho / 2; let maxY = boxY + boxAltura - playerTamanho / 2;
+  playerX = constrain(playerX, minX, maxX); playerY = constrain(playerY, minY, maxY);
+}
+
+function atualizarProjeteis() { for (let i = projeteis.length - 1; i >= 0; i--) { let p = projeteis[i]; p.update(); p.show(); if (!estaDandoDash && p.atingiu(playerX, playerY, playerTamanho)) { hitTimer = 10; projeteis.splice(i, 1); } else if (p.estaForaDaTela()) { projeteis.splice(i, 1); } } }
+function gerenciarEfeitoDano() { if (hitTimer > 0) { playerCor = corAtingido; hitTimer--; } else { playerCor = corNormal; } }
+
+// --- 6. Funções de Desenho ---
+function desenharJogador() { noStroke(); let corAtual = playerCor; if(estaDandoDash) { let alpha = map(millis() - tempoInicioDash, 0, DURACAO_DASH, 255, 100); corDash.setAlpha(alpha); corAtual = corDash; } else if (focoAtivo) { fill(255, 255, 0, 50); ellipse(playerX, playerY, playerTamanho * 2 + sin(frameCount * 0.3) * 5); corAtual = corFoco; } fill(corAtual); rectMode(CENTER); rect(playerX, playerY, playerTamanho, playerTamanho); rectMode(CORNER); }
+function desenharAreaBatalha() { stroke(255); strokeWeight(2); noFill(); rect(boxX, boxY, boxLargura, boxAltura); }
+function desenharUI() { let tempoRestanteDash = tempoCooldownDash - millis(); let progressoDash = (tempoRestanteDash > 0) ? (COOLDOWN_DASH - tempoRestanteDash) / COOLDOWN_DASH : 1; fill(100); rect(boxX, boxY + boxAltura + 15, boxLargura, 10); fill(0, 255, 255); rect(boxX, boxY + boxAltura + 15, boxLargura * progressoDash, 10); if(progressoDash === 1) { fill(255); textSize(10); text("DASH [ESPAÇO]", boxX + boxLargura/2, boxY + boxAltura + 20); } let tempoRestanteFoco = tempoCooldownFoco - millis(); let progressoFoco = (tempoRestanteFoco > 0) ? (COOLDOWN_FOCO - tempoRestanteFoco) / COOLDOWN_FOCO : 1; fill(100); rect(boxX, boxY + boxAltura + 35, boxLargura, 10); fill(255, 255, 0); rect(boxX, boxY + boxAltura + 35, boxLargura * progressoFoco, 10); if(progressoFoco === 1) { fill(255); textSize(10); text("FOCO [SHIFT]", boxX + boxLargura/2, boxY + boxAltura + 40); } }
+function desenharAvisos() { for (let aviso of avisos) { if (aviso.tipo === 'chuva') { stroke(255, 100, 0, 150); strokeWeight(4); for (let pos of aviso.posicoes) { line(pos.x, boxY, pos.x, boxY + boxAltura); } } else if (aviso.tipo === 'rajada') { fill(255, 100, 0, 150); noStroke(); let x = (aviso.lado === 'esquerda') ? boxX - 10 : boxX + boxLargura; triangle(x, aviso.y - 10, x, aviso.y + 10, x + (aviso.lado === 'esquerda' ? 10 : -10), aviso.y); } else if (aviso.tipo === 'bomba') { noFill(); stroke(255, 50, 50, 150); strokeWeight(3); let progressoAviso = (millis() - (tempoProximoEstado - DURACAO_AVISO)) / DURACAO_AVISO; ellipse(aviso.x, aviso.y, aviso.raio * (1 - progressoAviso)); } else if (aviso.tipo === 'cerco') { stroke(255, 50, 50, 200); strokeWeight(4); noFill(); rect(aviso.x, aviso.y, aviso.w, aviso.h); } else if (aviso.tipo === 'espiral') { fill(255, 0, 255, 100); noStroke(); let diametro = 20 + sin(frameCount * 0.2) * 10; ellipse(aviso.x, aviso.y, diametro, diametro); } else if (aviso.tipo === 'paredes') { fill(255, 100, 0, 50); noStroke(); rect(boxX, boxY, boxLargura, aviso.brechaPos - aviso.brecha / 2 - boxY); rect(boxX, aviso.brechaPos + aviso.brecha / 2, boxLargura, (boxY + boxAltura) - (aviso.brechaPos + aviso.brecha / 2));} else if (aviso.tipo === 'minas') { for (let mina of aviso.minas) { if (!mina.detonada) { let cor = mina.armada ? color(255, 0, 0, 150) : color(255, 255, 0, 100); fill(cor); noStroke(); ellipse(mina.x, mina.y, 15, 15); } } } else if (aviso.tipo === 'laser') { stroke(255, 0, 0, 150); strokeWeight(2); line(width/2, 0, aviso.alvoX, aviso.alvoY); fill(255,0,0,100); ellipse(aviso.alvoX, aviso.alvoY, 20, 20); } } }
+
+// --- 7. Classe Projetil ---
+class Projetil { constructor(x, y, vx, vy, tipo = 'normal') { this.x = x; this.y = y; this.vx = vx; this.vy = vy; this.tamanho = 10; this.tipo = tipo; if (this.tipo === 'laser') this.tamanho = 20; } update() { this.x += this.vx; this.y += this.vy; } show() { noStroke(); if(this.tipo === 'laser') { fill(255, 100, 100); rectMode(CENTER); rect(this.x, this.y, this.tamanho*3, this.tamanho/2); rectMode(CORNER); } else { fill(100, 100, 255); rectMode(CENTER); rect(this.x, this.y, this.tamanho, this.tamanho); rectMode(CORNER); } } estaForaDaTela() { return (this.x < -20 || this.x > width + 20 || this.y < -20 || this.y > height + 20); } atingiu(px, py, pTamanho) { return dist(this.x, this.y, px, py) < (this.tamanho / 2) + (pTamanho / 2); } }
