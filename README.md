@@ -4,8 +4,6 @@
 
 Um protótipo de jogo 2D no estilo *bullet hell* onde o jogador deve sobreviver a padrões de ataque cada vez mais complexos e intensos dentro de uma arena limitada. O projeto foca em controles responsivos, mecânicas de esquiva e um sistema de dificuldade progressiva.
 
-**Adicione um GIF do seu jogo aqui para uma ótima primeira impressão!**
-*![Gameplay GIF](URL_DO_SEU_GIF_AQUI.gif)*
 
 ---
 
