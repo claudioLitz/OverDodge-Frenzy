@@ -2,66 +2,71 @@
 
 ![Status](https://img.shields.io/badge/status-Em%20Desenvolvimento-yellow)
 ![License](https://img.shields.io/badge/license-MIT-blue)
-![Made with p5.js](https://img.shields.io/badge/made%20with-p5.js-red)
+![Made with p5.js](https://img.shields.io/badge/made%20with-p5.js-darkgreenmoss)
 
-> 🎯 *Um jogo 2D no estilo **bullet hell** onde o jogador deve sobreviver a padrões de ataque cada vez mais intensos dentro de uma arena limitada. O projeto foca em controles responsivos, esquivas precisas e dificuldade progressiva.*
+ ## 💀 Descrição do Projeto
 
----
+> *Imagine estar no centro de uma arena onde cada movimento conta.*
 
-## 🚀 Funcionalidades Principais
+Este é um jogo 2D no estilo bullet hell, em que reflexos rápidos e decisões precisas definem se você sobrevive… ou não. 
 
-- 🌀 **Movimentação com Inércia** — movimentação fluida que exige antecipação e precisão.  
-- ⚡ **Dash (`Espaço`)** — impulso rápido com invulnerabilidade temporária.  
-- 🎯 **Modo Foco (`Shift`)** — remove a inércia e permite desvios milimétricos.  
-- 💥 **Padrões de Ataque Dinâmicos** — chuva vertical, lasers, bombas-relógio e muito mais.  
-- 🔄 **Ciclo de Batalha** — alterna entre `PAUSA`, `AVISO` e `ATIVO`, criando ritmo de combate.  
-- 📈 **Dificuldade Progressiva** — ataques mais intensos conforme o tempo passa.  
-- 🧭 **Interface Clara** — feedback visual, avisos de ataque e cooldowns bem definidos.
+O jogador assume o controle de um pequeno personagem preso em uma arena fechada. A cada nova onda, padrões de ataque inimigos tornam-se mais complexos e intensos, enchendo a tela com projéteis em alta velocidade. 
 
----
+O desafio não é derrotar os inimigos, mas dançar entre os tiros, dominando esquivas milimétricas e movimentos estratégicos.
+o projeto foca em:
+
+🕹️ — Controles extremamente responsivos para uma sensação fluida e justa.
+
+⏳ — Progressão de dificuldade dinâmica, garantindo que cada partida seja mais intensa que a anterior.
+
+🎯 — Padrões de ataque criativos e variados, tornando cada tentativa única.
+
+💥— Feedback visual e sonoro envolvente, deixando cada esquiva mais satisfatória.
+
+O objetivo é simples — sobreviver o máximo possível. Mas, no calor da batalha, simples não significa fácil…*
+
+---------------------------------------------------------------
+
+## ⚔️ Funcionalidades Principais
+
+- 🌀 **Movimentação com Inércia** —
+- movimentação fluida que exige antecipação e precisão.
+
+- ⚡ **Dash (`Espaço`)** —
+- impulso rápido com invulnerabilidade temporária.
+
+- ⚔️ **Modo Foco (`Shift`)** —
+- remove a inércia e permite desvios milimétricos.
+
+- 💥 **Padrões de Ataque Dinâmicos** —
+- chuva vertical, lasers, bombas-relógio e muito mais.
+
+- 🔄 **Ciclo de Batalha** —
+- alterna entre `PAUSA`, `AVISO` e `ATIVO`, criando ritmo de combate.
+ 
+- 📈 **Dificuldade Progressiva** —
+- ataques mais intensos conforme o tempo passa.
+ 
+- 🧭 **Interface Clara** —
+- feedback visual, avisos de ataque e cooldowns bem definidos.
+
+---------------------------------------------------------------
 
 ## 🛠️ Como Executar o Protótipo
 
-Este projeto utiliza [p5.js](https://p5js.org/).  
-Você pode executar de duas formas:
+Ainda em desenvolvimento, porem quando lançar sera ja disponivel o local de acesso. . . .
 
-### ✅ 1. Usando um Servidor Local (Recomendado)
+## ⌨️ Controles
 
-#### 📦 Pré-requisitos
-- [Node.js](https://nodejs.org/) instalado  
-- Instalar o live-server:
-  ```bash
-  npm install -g live-server
-  /seu-projeto
-├── index.html
-├── sketch.js       <-- Código principal do jogo
-└── p5.js           <-- Biblioteca p5.js
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protótipo do Jogo</title>
-    <script src="p5.js"></script>
-    <script src="sketch.js"></script>
-    <style>
-        body { margin: 0; background: black; }
-        canvas { display: block; margin: auto; }
-    </style>
-</head>
-<body></body>
-</html>
-live-server
+| Tecla | Ação |
+| -------------------- | --------------------- | 
+| WASD ou Setas | Mover o personagem | 
+| Barra de Espaço | Ativar Dash (esquiva) | 
+| Shift | Ativar Modo Foco |
 
 
-***⌨️ Controles***
+## 📜 Requisitos do Projeto
 
-Tecla	Ação
-WASD ou Setas	Mover o personagem
-Espaço	Dash (esquiva)
-Shift	Modo Foco
-
-📜 Requisitos do Projeto
 <details> <summary>📌 <strong>Clique para expandir Requisitos Funcionais e Não-Funcionais</strong></summary>
 
 *⚙️ Requisitos Funcionais*
@@ -92,27 +97,32 @@ RNF05 — Arena com limites físicos bem definidos
 
 </details>
 
-💻 Tecnologias Utilizadas
+---------------------------------------------------------------
+
+## 💻 Tecnologias Utilizadas
 
 Tecnologia	Função
 🟨 JavaScript	Linguagem base
+
 🖼️ p5.js
-	Biblioteca gráfica para renderização 2D
-💻 VS Code	Ambiente de desenvolvimento (sugestão)
+Biblioteca gráfica para renderização 2D
+💻 VS Code	Ambiente de desenvolvimento 
 
-🧭 Roadmap (Próximos Passos)
 
- Sistema de pontuação e ranking
+---------------------------------------------------------------
 
- Fases e padrões de ataque mais variados
 
- Este projeto está licenciado sob a MIT License
-.
+## 📝Roadmap (Próximos Passos)
 
- Animações de impacto e feedback visual aprimorado
+- Sistema de pontuação e ranking
 
- Sons e trilhas sonoras customizados
+- Fases e padrões de ataque mais variados
 
- Suporte para gamepad
+- Este projeto está licenciado sob a MIT License.
 
+- Animações de impacto e feedback visual aprimorado
+
+- Sons e trilhas sonoras customizados
+ 
+- Suporte para gamepad
  
