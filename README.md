@@ -1,4 +1,4 @@
-# 🌀 Evasão Rítmica (Protótipo)
+# 🌀 OverDodge Frenzy (Protótipo)
 
 ![Status](https://img.shields.io/badge/status-Em%20Desenvolvimento-yellow)
 ![License](https://img.shields.io/badge/license-MIT-blue)
