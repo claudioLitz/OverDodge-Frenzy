@@ -52,10 +52,6 @@ O objetivo é simples — sobreviver o máximo possível. Mas, no calor da batal
 
 ---------------------------------------------------------------
 
-## 🛠️ Como Executar o Protótipo
-
-Ainda em desenvolvimento, porem quando lançar sera ja disponivel o local de acesso. . . .
-
 ## ⌨️ Controles
 
 | Tecla | Ação |
