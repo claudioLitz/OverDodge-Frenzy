@@ -21,9 +21,9 @@
 ### 3. Personagem do Jogador (Player)
 
 - **RF11:** O sistema deve apresentar um personagem controlável pelo jogador na tela.
-- **RF12:** O jogador deve poder executar ações de combate (ataque, defesa) em sincronia com os indicadores de ritmo.
-- **RF13:** O personagem do jogador deve ser capaz de se mover livremente em um plano 2D (eixos X e Y) dentro dos limites da arena de batalha.
-- **RF14:** O jogador deve ter acesso a habilidades como ataques e esquivas.
+- **RF12:** O sistema deve permitir executar ações de combate (ataque, defesa) em sincronia com os indicadores de ritmo.
+- **RF13:** O sistema deve permitir que o personagem do jogador deve ser capaz de se mover livremente em um plano 2D (eixos X e Y) dentro dos limites da arena de batalha.
+- **RF14:** O sistema deve permitir que o jogador deve ter acesso a habilidades como ataques e esquivas.
 - **RF15:** O sistema deve modificar ou acrescentar uma característica (ex: uma esquiva perfeita deve conceder ao jogador invulnerabilidade temporária).
 
 ### 4. Inimigos (PNJ - Personagem Não Jogável)
