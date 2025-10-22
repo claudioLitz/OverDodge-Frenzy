@@ -5,7 +5,7 @@
 ### 1. Interface de Usuário (UI) e Apresentação
 
 - **RF01:** O sistema deve exibir uma interface gráfica bidimensional (2D) para o jogador.
-- **RF02:** A interface deve conter elementos interativos clicáveis, como botões de menu (Iniciar, Opções, Sair) e seletores de fase/inimigo.
+- **RF02:** A sistema deve ler os inputs do cliente pelos elementos interativos clicáveis, como botões de menu (Iniciar, Opções, Sair) e seletores de fase/inimigo.
 - **RF03:** O sistema deve fornecer feedback visual e auditivo claro para todas as interações do jogador com a UI (ex: som de clique ao selecionar uma opção).
 - **RF04:** O sistema deve exibir um indicador de ritmo (ex: uma barra que se move, ícones que chegam a um alvo) que esteja perfeitamente sincronizado com a trilha sonora da batalha.
 - **RF05:** O sistema deve exibir indicadores visuais claros para sinalizar o início e o fim de uma batalha.
