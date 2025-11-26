@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 ![Made with p5.js](https://img.shields.io/badge/made%20with-p5.js-darkgreenmoss)
 
- ## 💀 Descrição do Projeto
+ ## Descrição do Projeto
 
 > *Imagine estar no centro de uma arena onde cada movimento conta.*
 
