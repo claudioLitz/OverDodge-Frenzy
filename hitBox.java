@@ -1,10 +1,10 @@
 public class hitBox {
-    public int Width;
-    public int Height;
-    public int[] Coords;
+    protected int Width;
+    protected int Height;
+    protected int[] Coords;
     //public bool Phase;
 
-    public void verifyHit(){
+    protected void verifyHit(){
 
     }
 }

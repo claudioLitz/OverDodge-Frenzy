@@ -15,7 +15,7 @@ public class Projectile {
 
 
 
-    public void SetProjectile(int posProjX, int posProjY, int[] origin, int accel, int dmg, String direction){
+    protected void SetProjectile(int posProjX, int posProjY, int[] origin, int accel, int dmg, String direction){
         this.posProjX = posProjX;
         this.posProjY = posProjY;
         this.origin = origin;
@@ -26,7 +26,7 @@ public class Projectile {
 
     }
 
-    public void GetStatus(){
+    protected void GetStatus(){
         System.out.println("Position x = " + this.posProjX);
         System.out.println("Position y = " + this.posProjY);
         System.out.println("Origin = " + Arrays.toString(this.origin));
@@ -35,15 +35,15 @@ public class Projectile {
         System.out.println("direction = " + this.direction);
     }
 
-    public void move(){
+    protected void move(){
 
     }
 
-    public void foreshadow(){
+    protected void foreshadow(){
 
     }
 
-    public void hitboxUPD(){
+    protected void hitboxUPD(){
 
 
     }

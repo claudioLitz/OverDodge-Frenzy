@@ -1,33 +1,33 @@
 public class User {
-    public int HP;
-    public int cooldown_dash;
-    public int cooldown_sprint;
-    public int cooldown_use;
-    public int[] coords;
-    public String direction;
-    public int accel;
-    public int[] stats;
+    protected int HP;
+    protected int cooldown_dash;
+    protected int cooldown_sprint;
+    protected int cooldown_use;
+    protected int[] coords;
+    protected String direction;
+    protected int accel;
+    protected int[] stats;
 
-    public void move(){
-
-    }
-
-    public void atk(){
+    protected void move(){
 
     }
-    public void dash(){
+
+    protected void atk(){
 
     }
-    public void sprint(){
+    protected void dash(){
 
     }
-    public void damage(){
+    protected void sprint(){
 
     }
-    public void interfaceUPD(){
+    protected void damage(){
 
     }
-    public void hitboxUPD(){
+    protected void interfaceUPD(){
+
+    }
+    protected void hitboxUPD(){
         
     }
 }
