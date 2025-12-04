@@ -50,7 +50,7 @@ public class User {
     }
 
 
-
+    //Method to view all stats of the User
     public void ShowStatus(){
         System.out.println("Vida: "+this.HP);
         System.out.println("Dash: "+ this.cooldown_dash);
