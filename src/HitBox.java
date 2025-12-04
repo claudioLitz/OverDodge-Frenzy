@@ -1,3 +1,4 @@
+
 public class HitBox {
     protected int Width;
     protected int Height;
