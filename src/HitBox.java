@@ -1,23 +1,43 @@
 
 public class HitBox {
-    protected int Width;
-    protected int Height;
-    protected int[] Coords;
+    public int Width;
+    public int Height;
+    public int[] Coords;
     //public bool Phase;
 
-    protected void SetWidth(int width){
+    public void Hitbox(int width, int Height, int[] Coords){
         this.Width = width;
-    }
-
-    protected void SetHeight(int Height){
+        this.Coords = Coords;
         this.Height = Height;
     }
 
-    protected void SetCoords (int[] Coords){
+
+    public void SetWidth(int width){
+        this.Width = width;
+    }
+
+    public void SetHeight(int Height){
+        this.Height = Height;
+    }
+
+    public void SetCoords (int[] Coords){
         this.Coords = Coords;
     }
 
-    protected void GetStatus(){
+    public int GetWidth(){
+        return Width;
+    }
+
+    public int GetHeight(){
+        return Height;
+    }
+
+    public int[] GetCoords(){
+        return Coords;
+    }
+
+
+    public void Status(){
         System.out.println(" - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
         System.out.println("Status:   ");
         System.out.println("Width: " + this.Width);
@@ -25,7 +45,7 @@ public class HitBox {
 
     }
     
-    protected void verifyHit(){
+    public void verifyHit(){
 
     }
 }
