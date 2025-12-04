@@ -2,15 +2,20 @@
 import java.util.Arrays;
 
 public class Projectile {
-    public int posProjX;
-    public int posProjY;
-    public int[] origin;
-    public int accel;
-    public int dmg;
-    public String direction;
+    protected int posProjX;
+    protected int posProjY;
+    protected int[] origin;
+    protected int accel;
+    protected int dmg;
+    protected String direction;
 
 
-    public Projectile(int posProjX, int posProjY, int[] origin, int accel, int dmg, String direction){
+
+
+
+
+
+    public void SetProjectile(int posProjX, int posProjY, int[] origin, int accel, int dmg, String direction){
         this.posProjX = posProjX;
         this.posProjY = posProjY;
         this.origin = origin;
@@ -21,7 +26,7 @@ public class Projectile {
 
     }
 
-    public void stats(){
+    public void GetStatus(){
         System.out.println("Position x = " + this.posProjX);
         System.out.println("Position y = " + this.posProjY);
         System.out.println("Origin = " + Arrays.toString(this.origin));
