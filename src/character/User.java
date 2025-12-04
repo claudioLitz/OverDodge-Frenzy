@@ -1,3 +1,5 @@
+package character;
+
 public class User {
     protected int HP;
     protected int cooldown_dash;

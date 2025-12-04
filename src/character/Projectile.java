@@ -1,21 +1,18 @@
-
+package character;
 import java.util.Arrays;
 
 public class Projectile {
-    protected int posProjX;
-    protected int posProjY;
-    protected int[] origin;
-    protected int accel;
-    protected int dmg;
-    protected String direction;
+    public int posProjX;
+    public int posProjY;
+    public int[] origin;
+    public int accel;
+    public int dmg;
+    public String direction;
 
 
 
 
-
-
-
-    protected void SetProjectile(int posProjX, int posProjY, int[] origin, int accel, int dmg, String direction){
+    public Projectile(int posProjX, int posProjY, int[] origin, int accel, int dmg, String direction){
         this.posProjX = posProjX;
         this.posProjY = posProjY;
         this.origin = origin;
@@ -26,7 +23,7 @@ public class Projectile {
 
     }
 
-    protected void GetStatus(){
+    public void GetStatus(){
         System.out.println("Position x = " + this.posProjX);
         System.out.println("Position y = " + this.posProjY);
         System.out.println("Origin = " + Arrays.toString(this.origin));
@@ -34,6 +31,8 @@ public class Projectile {
         System.out.println("damage = " + this.dmg);
         System.out.println("direction = " + this.direction);
     }
+
+
 
     protected void move(){
 
@@ -47,9 +46,6 @@ public class Projectile {
 
 
     }
-
-
-
 
 
 }

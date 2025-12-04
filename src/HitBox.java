@@ -1,4 +1,4 @@
-public class hitBox {
+public class HitBox {
     protected int Width;
     protected int Height;
     protected int[] Coords;
